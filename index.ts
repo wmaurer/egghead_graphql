@@ -1,7 +1,16 @@
 import * as express from 'express';
 import * as graphqlHTTP from 'express-graphql';
-import { GraphQLSchema, GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt, GraphQLBoolean } from 'graphql';
-import { getVideoById } from './src/data';
+import {
+    GraphQLSchema,
+    GraphQLObjectType,
+    GraphQLString,
+    GraphQLID,
+    GraphQLInt,
+    GraphQLBoolean,
+    GraphQLNonNull,
+    GraphQLList
+} from 'graphql';
+import { getVideoById, getVideos } from './src/data';
 
 const PORT = process.env.PORT || 3000;
 const server = express();
@@ -24,9 +33,13 @@ const queryType = new GraphQLObjectType({
         video: {
             type: videoType,
             args: {
-                id: { type: GraphQLID }
+                id: { type: new GraphQLNonNull(GraphQLID) }
             },
             resolve: (_, args) => getVideoById(args.id)
+        },
+        videos: {
+            type: new GraphQLList(videoType),
+            resolve: getVideos
         }
     }
 });
