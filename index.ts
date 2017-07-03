@@ -10,7 +10,7 @@ import {
     GraphQLNonNull,
     GraphQLList
 } from 'graphql';
-import { getVideoById, getVideos } from './src/data';
+import { getVideoById, getVideos, createVideo } from './src/data';
 
 const PORT = process.env.PORT || 3000;
 const server = express();
@@ -21,8 +21,8 @@ const videoType = new GraphQLObjectType({
     fields: {
         id: { type: GraphQLID },
         title: { type: GraphQLString },
-        duration: { type: GraphQLString },
-        watched: { type: GraphQLBoolean }
+        duration: { type: GraphQLInt },
+        released: { type: GraphQLBoolean }
     }
 });
 
@@ -44,8 +44,25 @@ const queryType = new GraphQLObjectType({
     }
 });
 
+const mutationType = new GraphQLObjectType({
+    name: 'Mutation',
+    description: 'The root mutation type.',
+    fields: {
+        createVideo: {
+            type: videoType,
+            args: {
+                title: { type: GraphQLString },
+                duration: { type: GraphQLInt },
+                released: { type: GraphQLBoolean }
+            },
+            resolve: (_, args: any) => createVideo(args)
+        }
+    }
+});
+
 const schema = new GraphQLSchema({
-    query: queryType
+    query: queryType,
+    mutation: mutationType
 });
 
 server.use(

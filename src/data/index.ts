@@ -2,17 +2,30 @@ const videoA = {
     id: 'a',
     title: 'Create a GraphQL server',
     duration: 180,
-    watched: true
+    released: true
 };
 
 const videoB = {
     id: 'b',
     title: 'Learn the latest Cycle.js',
     duration: 120,
-    watched: false
+    released: false
 };
 
 const videos = [videoA, videoB];
+
+export const createVideo = ({ title, duration, released }: { title: string; duration: number; released: boolean }) => {
+    const video = {
+        id: new Buffer(title, 'utf8').toString('base64'),
+        title,
+        duration,
+        released
+    };
+
+    videos.push(video);
+
+    return video;
+};
 
 export const getVideos = () =>
     new Promise(resolve => {
